@@ -1,5 +1,4 @@
 project "Engine"
-	kind "None"
 	language "C++"
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
@@ -16,6 +15,11 @@ project "Engine"
 		"vendor/glm/glm/**.inl",
 		
 		"%{wks.location}/Engine/vendor/glad/src/glad.c",
+		"vendor/FelineLoad/feline_load.h",
+		"vendor/FelineLoad/feline_load.c",
+		
+		"vendor/stb/stb_image.h",
+		"vendor/stb/stb_image.c"
     }
 	
 	-- Include external directories
@@ -24,13 +28,21 @@ project "Engine"
 		"src",
 		"./",
 		"%{wks.location}/Engine/vendor/sdl3/include",
-		"%{wks.location}/Engine/vendor/glad/include"
+		"%{wks.location}/Engine/vendor/glad/include",
+		"vendor/glm",
+		"vendor/FelineLoad",
+		"%{wks.location}/Engine/vendor/stb",
+		"%{wks.location}/Engine/vendor/ecs/include"
     }
 	
 	-- Link dependencies
     links
     {
     }
+	
+	defines
+	{
+	}
 	
     filter { "platforms:Static" }
 		kind "StaticLib"

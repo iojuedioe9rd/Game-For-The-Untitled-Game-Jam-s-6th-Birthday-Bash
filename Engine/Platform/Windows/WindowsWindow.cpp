@@ -1,6 +1,7 @@
 #include "WindowsWindow.h"
 #include "glad/glad.h"
 #include <SDL3/SDL.h>
+#include <iostream>
 
 namespace Engine
 {
@@ -74,13 +75,32 @@ namespace Engine
 		SDL_GL_SwapWindow(m_Data.Window);
 	}
 
+	void APIENTRY GLDebugOutput(
+		GLenum source,
+		GLenum type,
+		GLuint id,
+		GLenum severity,
+		GLsizei length,
+		const GLchar* message,
+		const void* userParam)
+	{
+
+		std::cerr << "GL DEBUG: " << message << std::endl;
+
+		if (severity == GL_DEBUG_SEVERITY_HIGH)
+			std::cerr << "SEVERITY: HIGH" << std::endl;
+
+		// You can also exit or throw here on critical errors
+	}
+
+
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-
-
+		
+		
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -97,8 +117,9 @@ namespace Engine
 		{
 
 		}
-
-
+		glDebugMessageCallback(GLDebugOutput, nullptr);
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // optional: makes messages synchronous
 		glEnable(GL_DEPTH_TEST);
 		glViewport(0, 0, m_Data.Width, m_Data.Height);
 

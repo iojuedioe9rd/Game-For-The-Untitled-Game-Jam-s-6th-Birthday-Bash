@@ -1,0 +1,31 @@
+# Generated build.ninja
+
+rule compile_cpp
+  command = cmd /c emcc -O1 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 -I../Engine/src -I../Engine/vendor/SDL3/include -I../Engine -I../Engine/vendor/FelineLoad -I../Engine/vendor/stb -I../Engine/vendor/glm -I../Engine/vendor/ecs/include -std=c++17 -c $in -o $out
+
+rule compile_c
+  command = cmd /c emcc -O1 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 -I../Engine/src -I../Engine/vendor/SDL3/include -I../Engine -I../Engine/vendor/FelineLoad -I../Engine/vendor/stb -I../Engine/vendor/glm -I../Engine/vendor/ecs/include -x c -c $in -o $out
+
+rule link
+  command = cmd /c emcc -L../Engine/vendor/SDL3/Web $in -o dist/index.html -lSDL3 -O1 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 --preload-file assets
+
+build build/Engine/Platform/WebGL/WebGLWindow.o: compile_cpp ../Engine/Platform/WebGL/WebGLWindow.cpp
+build build/Engine/src/Engine/Core/Application.o: compile_cpp ../Engine/src/Engine/Core/Application.cpp
+build build/Engine/src/Engine/Core/Window.o: compile_cpp ../Engine/src/Engine/Core/Window.cpp
+build build/Engine/src/Engine/Math/Math.o: compile_cpp ../Engine/src/Engine/Math/Math.cpp
+build build/Engine/src/Engine/Renderer/Shader.o: compile_cpp ../Engine/src/Engine/Renderer/Shader.cpp
+build build/Engine/src/Engine/Renderer/VBO.o: compile_cpp ../Engine/src/Engine/Renderer/VBO.cpp
+build build/Engine/src/Engine/Renderer/VAO.o: compile_cpp ../Engine/src/Engine/Renderer/VAO.cpp
+build build/Engine/src/Engine/Core/Camera.o: compile_cpp ../Engine/src/Engine/Core/Camera.cpp
+build build/Engine/vendor/stb/stb_image.o: compile_c ../Engine/vendor/stb/stb_image.c
+build build/Engine/src/Engine/Renderer/EBO.o: compile_cpp ../Engine/src/Engine/Renderer/EBO.cpp
+build build/Game/src/main.o: compile_cpp ../Game/src/main.cpp
+build build/Engine/src/Engine/Renderer/Texture.o: compile_cpp ../Engine/src/Engine/Renderer/Texture.cpp
+build build/Engine/vendor/FelineLoad/feline_load.o: compile_c ../Engine/vendor/FelineLoad/feline_load.c
+build build/Engine/src/Engine/Core/Input.o: compile_cpp ../Engine/src/Engine/Core/Input.cpp
+build build/Engine/src/Engine/Renderer/Renderer2D.o: compile_cpp ../Engine/src/Engine/Renderer/Renderer2D.cpp
+build build/Engine/src/Engine/main.o: compile_cpp ../Engine/src/Engine/main.cpp
+
+build dist/index.html: link build/Engine/Platform/WebGL/WebGLWindow.o build/Engine/src/Engine/Core/Application.o build/Engine/src/Engine/Core/Window.o build/Engine/src/Engine/Math/Math.o build/Engine/src/Engine/Renderer/Shader.o build/Engine/src/Engine/Renderer/VBO.o build/Engine/src/Engine/Renderer/VAO.o build/Engine/src/Engine/Core/Camera.o build/Engine/vendor/stb/stb_image.o build/Engine/src/Engine/Renderer/EBO.o build/Game/src/main.o build/Engine/src/Engine/Renderer/Texture.o build/Engine/vendor/FelineLoad/feline_load.o build/Engine/src/Engine/Core/Input.o build/Engine/src/Engine/Renderer/Renderer2D.o build/Engine/src/Engine/main.o
+
+default dist/index.html

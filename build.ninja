@@ -1,0 +1,13 @@
+# Generated build.ninja
+
+rule compile_cpp
+  command = cmd /c emcc -O1 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -I../Engine/src -I../Engine/vendor/SDL3/include -I../Engine -I../Engine/vendor/FelineLoad -I../Engine/vendor/stb -I../Engine/vendor/glm -std=c++17 -c $in -o $out
+
+rule compile_c
+  command = cmd /c emcc -O1 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -I../Engine/src -I../Engine/vendor/SDL3/include -I../Engine -I../Engine/vendor/FelineLoad -I../Engine/vendor/stb -I../Engine/vendor/glm -x c -c $in -o $out
+
+build build/Engine/vendor/stb/stb_image.o: compile_c ../Engine/vendor/stb/stb_image.c
+build build/Engine/vendor/FelineLoad/feline_load.o: compile_c ../Engine/vendor/FelineLoad/feline_load.c
+
+build all: phony build/Engine/vendor/stb/stb_image.o build/Engine/vendor/FelineLoad/feline_load.o
+default all
