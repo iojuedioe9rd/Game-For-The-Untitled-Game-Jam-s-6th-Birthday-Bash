@@ -3,16 +3,14 @@
 #include "../../Engine/src/Engine/main.h"
 #include "../../Engine/src/Engine/Core/Application.h"
 #include "Engine/Core/Input.h"
+#include "box2d/b2_body.h"
 
 #define SDL_MAIN_USE_CALLBACKS 1  /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <Engine/Core/Components.h>
-
-
-/* We will use this renderer to draw into this window every frame. */
-static SDL_Window* window = NULL;
-static SDL_Renderer* renderer = NULL;
+#include "Map.h"
+#include "Components.h"
 
 class Game : public Engine::Application
 {
@@ -39,11 +37,8 @@ namespace Engine
 }
 
 static Game* s_Game = nullptr;
+static Engine::Ref<Map> s_map;
 
-struct Player
-{
-	float speed = 5.0f;
-};
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
@@ -53,10 +48,16 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 	s_Game = (Game*)Engine::CreateApplication();
 	s_Game->AddUpdateFunc([&](float dt, ecs::Manager& m) {
 		// Update the game state here
-
-		for (auto [e, player, tr] : m.EntitiesWith<Player, Engine::Components::TransformComponent>())
+		
+		for (auto [e, player, tr, rb2d] : m.EntitiesWith<Player, Engine::Components::TransformComponent, Engine::Components::Rigidbody2DComponent>())
 		{
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			b2Vec2 velocity = body->GetLinearVelocity();
+
 			glm::vec2 direction = glm::vec2(0, 0);
+			s_Game->Camera.Position.x = tr.Position.x;
+			s_Game->Camera.Position.y = tr.Position.y;
+
 			// player.speed * dt
 			/*
 			if (Engine::Input::IsPressed('w'))
@@ -79,21 +80,47 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 				direction.x += 1;
 			}
 
+			
+
+			if (Engine::Input::IsPressed(' ') && velocity.y >= -1.0f)
+			{
+				player.jumpTimer += dt * 2.1f;
+			}
+
+			if (!Engine::Input::IsPressed(' ') && player.jumpTimer >= 0.0f)
+			{
+				body->ApplyLinearImpulseToCenter(b2Vec2(0, player.jumpTimer * player.jump * dt), true);
+				player.jumpTimer = -1.0f;
+			}
 			if (direction.x == 0 && direction.y == 0)
 			{
 				continue;
 			}
+
 			direction = glm::normalize(direction);
 
 			tr.Position += glm::vec3(direction.x, direction.y, 0) * player.speed * dt;
+						
 		}
 	});
-	ecs::Entity player = s_Game->GetManager().CreateEntity();
-	player.Add<Engine::Components::TransformComponent>(glm::vec3(0, 1, 0), glm::vec3(0), glm::vec3(2));
-	player.Add<Engine::Components::Renderer>(glm::vec4(1, 1, 1, 1));
-	s_Game->NewCommponent<Engine::Components::Rigidbody2DComponent>(player, Engine::Components::Rigidbody2DComponent::BodyType::Dynamic);
-	s_Game->NewCommponent<Engine::Components::BoxCollider2DComponent>(player);
-	player.Add<Player>();
+
+	s_Game->AddUpdateFunc([&](float dt, ecs::Manager& m) {
+		for (auto [e, badGuy, tr, rb2d] : m.EntitiesWith<BadGuy, Engine::Components::TransformComponent, Engine::Components::Rigidbody2DComponent>())
+		{
+
+		}
+
+
+	});
+
+	//ecs::Entity player = s_Game->GetManager().CreateEntity();
+	//player.Add<Engine::Components::TransformComponent>(glm::vec3(0, 1, 0), glm::vec3(0), glm::vec3(2));
+	//player.Add<Engine::Components::Renderer>(glm::vec4(1, 1, 1, 1));
+	//s_Game->NewCommponent<Engine::Components::Rigidbody2DComponent>(player, Engine::Components::Rigidbody2DComponent::BodyType::Dynamic);
+	//s_Game->NewCommponent<Engine::Components::BoxCollider2DComponent>(player);
+	//player.Add<Player>();
+
+	s_map = Map::Create("assets/Tiled/map.tmj");
 
 	ecs::Entity floor = s_Game->GetManager().CreateEntity();
 	floor.Add<Engine::Components::TransformComponent>(glm::vec3(-5), glm::vec3(0), glm::vec3(100, 1, 1));

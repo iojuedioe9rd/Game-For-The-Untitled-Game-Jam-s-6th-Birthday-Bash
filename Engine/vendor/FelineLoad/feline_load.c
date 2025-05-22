@@ -155,7 +155,7 @@ File feline_load_file(const char* filename, bool null_terminated) {
 
         printf("File already loaded: %s\n", filename);
         printf("File size: %zu bytes\n", f->size); // Print file size
-        printf("File content: %s\n", f->buffer); // Print file content
+        //printf("File content: %s\n", f->buffer); // Print file content
         if (strcmp(f->filename, filename) == 0) return *f;
     }
 

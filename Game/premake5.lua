@@ -8,6 +8,7 @@ project "Game"
         "src/**.h",
         "src/**.cpp",
         "src/**.c",
+		"%{wks.location}/Engine/vendor/FelineLoad/feline_load.c"
     }
     
     -- Include external directories
@@ -18,7 +19,9 @@ project "Game"
 		"%{wks.location}/Engine/vendor/glm",
 		"%{wks.location}/Engine/vendor/sdl3/include",
 		"%{wks.location}/Engine/vendor/ecs/include",
-		"%{wks.location}/Engine/vendor/box2d/include"
+		"%{wks.location}/Engine/vendor/box2d/include",
+		"%{wks.location}/Engine/vendor/FelineLoad",
+		"%{wks.location}/Engine/vendor/json/single_include"
     }
     
     -- Link dependencies

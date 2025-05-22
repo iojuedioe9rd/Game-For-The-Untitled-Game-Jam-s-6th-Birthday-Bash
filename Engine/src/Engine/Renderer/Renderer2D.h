@@ -12,11 +12,11 @@ namespace Engine
 
 		static void Shutdown();
 
-		static void BeginScene(const glm::mat4& cam);
+		static void BeginScene(const glm::mat4& cam, const glm::vec3& camPos);
 		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
 		static void DrawQuad(const glm::mat4& transform, const Ref<Texture>& texture, const glm::vec4& color = glm::vec4(1.0f));
 		//static void DrawQuad(const glm::mat4& transform, const Ref<Texture> texture, const glm::vec4& color);
-
+		static void DrawInstanced(const std::vector<glm::mat4>& transforms, const Ref<Texture>& texture, const glm::vec4& color);
 		static void EndScene();
 
 	private:

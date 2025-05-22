@@ -17,7 +17,7 @@ source_files = [
 
 # Compiler flags for emcc
 args = [
-    "-O1",
+    "-O3",
     "-msimd128",
     "-msse",
     "-msse2",
@@ -47,7 +47,8 @@ include_dirs = [
     "../Engine/vendor/ecs/include",
     "../Engine/vendor/box2d/include",
     "../Engine/vendor/box2d/src",
-    "../Engine/vendor/miniaudio"
+    "../Engine/vendor/miniaudio",
+    "../Engine/vendor/json/single_include",
 ]
 
 # Library directories

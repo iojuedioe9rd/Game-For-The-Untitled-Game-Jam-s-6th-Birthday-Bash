@@ -60,7 +60,7 @@ namespace Engine
 
 
 	Application::Application()
-		: m_Camera(19, 18, glm::vec3(0.0f, 0.0f, 2.0f))
+		: Camera(19, 18, glm::vec3(0.0f, 0.0f, 2.0f))
 	{
 		Input::Init();
 		feline_load_init();
@@ -69,7 +69,7 @@ namespace Engine
 		m_Running = true;
 		m_Window = Window::New();
 
-		m_World = new b2World(b2Vec2(0.0f, -10.0f));
+		m_World = new b2World(b2Vec2(0.0f, -9.81));
 
 		m_Manager = ecs::Manager();
 		m_Manager.Refresh();
@@ -112,7 +112,7 @@ namespace Engine
 			Components::BoxCollider2DComponent* box = static_cast<Components::BoxCollider2DComponent*>(commp);
 			b2PolygonShape boxShape;
 			
-			boxShape.SetAsBox(entity.Get<Components::TransformComponent>().Scale.x, entity.Get<Components::TransformComponent>().Scale.y);
+			boxShape.SetAsBox(entity.Get<Components::TransformComponent>().Scale.x *box->Size.x, entity.Get<Components::TransformComponent>().Scale.y * box->Size.y);
 			b2FixtureDef fixtureDef;
 			fixtureDef.shape = &boxShape;
 			fixtureDef.density = box->Density;
@@ -154,8 +154,8 @@ namespace Engine
 		m_Shader = Shader::Create("assets/shaders/shader_vs.glsl", "assets/shaders/shader_fs.glsl");
 		m_Texture = Texture::Create("assets/textures/Player.png", GL_TEXTURE_2D, GL_TEXTURE0);
 		m_Texture->texUnit(m_Shader, "tex0", 0);
-		m_Camera.Resize(m_Window->GetWidth(), m_Window->GetHeight());
-		m_Camera.Position.z = 10.f;
+		Camera.Resize(m_Window->GetWidth(), m_Window->GetHeight());
+		Camera.Position.z = 10.f;
 
 		// Generates Vertex Array Object and binds it
 		VAO1 = VAO::Create();
@@ -203,6 +203,8 @@ namespace Engine
 		float green = 0.5f + 0.5f * SDL_sin(timer + SDL_PI_D * 2.0 / 3.0);
 		float blue = 0.5f + 0.5f * SDL_sin(timer + SDL_PI_D * 4.0 / 3.0);
 
+		
+
 		glClearColor(red, green, blue, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -241,8 +243,8 @@ namespace Engine
 		// Set light and camera uniforms
 		glUniform4f(glGetUniformLocation(m_Shader->ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 		glUniform3f(glGetUniformLocation(m_Shader->ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(glGetUniformLocation(m_Shader->ID, "camPos"), m_Camera.Position.x, m_Camera.Position.y, m_Camera.Position.z);
-		m_Camera.Matrix(90, 0.01f, 100.0f, m_Shader, "camMatrix");
+		glUniform3f(glGetUniformLocation(m_Shader->ID, "camPos"), Camera.Position.x, Camera.Position.y, Camera.Position.z);
+		Camera.Matrix(90, 0.01f, 100.0f, m_Shader, "camMatrix");
 
 		// Outputs the matrices into the Vertex Shader
 		int modelLoc = glGetUniformLocation(m_Shader->ID, "model");
@@ -253,7 +255,7 @@ namespace Engine
 		GLuint uniID = glGetUniformLocation(m_Shader->ID, "scale");
 		glUniform1f(uniID, 1);
 
-		Renderer2D::BeginScene(m_Camera.Matrix(90, 0.1f, 100.0f));
+		Renderer2D::BeginScene(Camera.Matrix(90, 0.1f, 100.0f), Camera.Position);
 
 		for (auto& func : m_UpdateFuncList) {
 			func(dt, m_Manager);
@@ -278,6 +280,7 @@ namespace Engine
 			auto position = body->GetPosition();
 			position.x = pos.Position.x;
 			position.y = pos.Position.y;
+			body->ApplyForceToCenter(b2Vec2(0, -.5f), true);
 			body->SetTransform(position, glm::radians(pos.Rotation.z));
 		}
 

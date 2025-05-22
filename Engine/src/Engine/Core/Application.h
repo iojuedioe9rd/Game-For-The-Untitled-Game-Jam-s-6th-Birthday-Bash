@@ -51,6 +51,8 @@ namespace Engine
 			return m_Manager;
 		}
 
+		Camera Camera;
+
 	private:
 		
 		void InitCommponent(ecs::Entity entity, void* commp, const std::string type_name);
@@ -67,8 +69,6 @@ namespace Engine
 
 		ecs::Manager m_Manager;
 		ecs::Entity m_Player;
-
-		Camera m_Camera;
 		std::vector<std::function<void(float, ecs::Manager&)>> m_UpdateFuncList;
 
 		bool m_fistFime = true;

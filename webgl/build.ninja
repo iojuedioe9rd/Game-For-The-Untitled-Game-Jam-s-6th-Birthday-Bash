@@ -1,78 +1,79 @@
 # Generated build.ninja
 
 rule compile_cpp
-  command = cmd /c emcc -O1 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 -Wunused-command-line-argument -sALLOW_TABLE_GROWTH=1 -sASYNCIFY=1 -I../Engine/src -I../Engine/vendor/SDL3/include -I../Engine -I../Engine/vendor/FelineLoad -I../Engine/vendor/stb -I../Engine/vendor/glm -I../Engine/vendor/ecs/include -I../Engine/vendor/box2d/include -I../Engine/vendor/box2d/src -I../Engine/vendor/miniaudio -std=c++17 -c $in -o $out
+  command = cmd /c emcc -O3 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 -Wunused-command-line-argument -sALLOW_TABLE_GROWTH=1 -sASYNCIFY=1 -I../Engine/src -I../Engine/vendor/SDL3/include -I../Engine -I../Engine/vendor/FelineLoad -I../Engine/vendor/stb -I../Engine/vendor/glm -I../Engine/vendor/ecs/include -I../Engine/vendor/box2d/include -I../Engine/vendor/box2d/src -I../Engine/vendor/miniaudio -I../Engine/vendor/json/single_include -std=c++17 -c $in -o $out
 
 rule compile_c
-  command = cmd /c emcc -O1 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 -Wunused-command-line-argument -sALLOW_TABLE_GROWTH=1 -sASYNCIFY=1 -I../Engine/src -I../Engine/vendor/SDL3/include -I../Engine -I../Engine/vendor/FelineLoad -I../Engine/vendor/stb -I../Engine/vendor/glm -I../Engine/vendor/ecs/include -I../Engine/vendor/box2d/include -I../Engine/vendor/box2d/src -I../Engine/vendor/miniaudio -x c -c $in -o $out
+  command = cmd /c emcc -O3 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 -Wunused-command-line-argument -sALLOW_TABLE_GROWTH=1 -sASYNCIFY=1 -I../Engine/src -I../Engine/vendor/SDL3/include -I../Engine -I../Engine/vendor/FelineLoad -I../Engine/vendor/stb -I../Engine/vendor/glm -I../Engine/vendor/ecs/include -I../Engine/vendor/box2d/include -I../Engine/vendor/box2d/src -I../Engine/vendor/miniaudio -I../Engine/vendor/json/single_include -x c -c $in -o $out
 
 rule link
-  command = cmd /c emcc -L../Engine/vendor/SDL3/Web $in -o dist/index.html -lSDL3 -O1 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 -Wunused-command-line-argument -sALLOW_TABLE_GROWTH=1 -sASYNCIFY=1 --preload-file assets
+  command = cmd /c emcc -L../Engine/vendor/SDL3/Web $in -o dist/index.html -lSDL3 -O3 -msimd128 -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_WEBGL2=1 -s FULL_ES3=1 -Wall -O0 -Wunused-command-line-argument -sALLOW_TABLE_GROWTH=1 -sASYNCIFY=1 --preload-file assets
 
-build build/Engine/src/Engine/Renderer/EBO.o: compile_cpp ../Engine/src/Engine/Renderer/EBO.cpp
-build build/Engine/vendor/box2d/src/collision/b2_collide_circle.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_collide_circle.cpp
-build build/Engine/vendor/box2d/src/collision/b2_collide_edge.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_collide_edge.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_fixture.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_fixture.cpp
-build build/Engine/src/Engine/Core/Application.o: compile_cpp ../Engine/src/Engine/Core/Application.cpp
-build build/Engine/src/Engine/main.o: compile_cpp ../Engine/src/Engine/main.cpp
-build build/Engine/src/Engine/Renderer/Texture.o: compile_cpp ../Engine/src/Engine/Renderer/Texture.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_circle_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_circle_contact.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_joint.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_contact_solver.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_contact_solver.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_world.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_world.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_body.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_body.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_chain_polygon_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_chain_polygon_contact.cpp
-build build/Engine/src/Engine/Math/Math.o: compile_cpp ../Engine/src/Engine/Math/Math.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_wheel_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_wheel_joint.cpp
-build build/Engine/vendor/box2d/src/collision/b2_edge_shape.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_edge_shape.cpp
-build build/Engine/src/Engine/Core/Input.o: compile_cpp ../Engine/src/Engine/Core/Input.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_edge_polygon_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_edge_polygon_contact.cpp
 build build/Engine/src/Engine/Renderer/Renderer2D.o: compile_cpp ../Engine/src/Engine/Renderer/Renderer2D.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_polygon_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_polygon_contact.cpp
+build build/Engine/src/Engine/Renderer/Texture.o: compile_cpp ../Engine/src/Engine/Renderer/Texture.cpp
+build build/Game/src/main.o: compile_cpp ../Game/src/main.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_distance_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_distance_joint.cpp
+build build/Engine/src/Engine/Core/Audio.o: compile_cpp ../Engine/src/Engine/Core/Audio.cpp
+build build/Engine/vendor/box2d/src/collision/b2_chain_shape.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_chain_shape.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_island.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_island.cpp
+build build/Engine/vendor/box2d/src/collision/b2_collide_polygon.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_collide_polygon.cpp
+build build/Engine/vendor/box2d/src/collision/b2_polygon_shape.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_polygon_shape.cpp
+build build/Engine/vendor/box2d/src/collision/b2_dynamic_tree.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_dynamic_tree.cpp
+build build/Engine/vendor/box2d/src/common/b2_settings.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_settings.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_contact_solver.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_contact_solver.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_contact_manager.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_contact_manager.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_fixture.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_fixture.cpp
+build build/Engine/src/Engine/Renderer/Shader.o: compile_cpp ../Engine/src/Engine/Renderer/Shader.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_revolute_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_revolute_joint.cpp
+build build/Engine/src/Engine/Renderer/VAO.o: compile_cpp ../Engine/src/Engine/Renderer/VAO.cpp
+build build/Engine/src/Engine/main.o: compile_cpp ../Engine/src/Engine/main.cpp
+build build/Engine/src/Engine/Renderer/EBO.o: compile_cpp ../Engine/src/Engine/Renderer/EBO.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_prismatic_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_prismatic_joint.cpp
+build build/Engine/src/Engine/Math/Math.o: compile_cpp ../Engine/src/Engine/Math/Math.cpp
+build build/Engine/vendor/box2d/src/collision/b2_collision.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_collision.cpp
+build build/Engine/vendor/box2d/src/collision/b2_time_of_impact.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_time_of_impact.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_body.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_body.cpp
+build build/Engine/vendor/stb/stb_image.o: compile_c ../Engine/vendor/stb/stb_image.c
+build build/Engine/vendor/box2d/src/dynamics/b2_mouse_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_mouse_joint.cpp
+build build/Engine/vendor/box2d/src/common/b2_draw.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_draw.cpp
+build build/Engine/vendor/FelineLoad/feline_load.o: compile_c ../Engine/vendor/FelineLoad/feline_load.c
 build build/Engine/vendor/box2d/src/dynamics/b2_gear_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_gear_joint.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_weld_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_weld_joint.cpp
+build build/Engine/Platform/WebGL/WebGLWindow.o: compile_cpp ../Engine/Platform/WebGL/WebGLWindow.cpp
 build build/Engine/vendor/box2d/src/collision/b2_circle_shape.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_circle_shape.cpp
 build build/Engine/vendor/box2d/src/dynamics/b2_chain_circle_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_chain_circle_contact.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_friction_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_friction_joint.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_pulley_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_pulley_joint.cpp
-build build/Engine/src/Engine/Core/Camera.o: compile_cpp ../Engine/src/Engine/Core/Camera.cpp
-build build/Engine/vendor/box2d/src/common/b2_timer.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_timer.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_island.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_island.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_mouse_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_mouse_joint.cpp
-build build/Engine/vendor/box2d/src/collision/b2_dynamic_tree.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_dynamic_tree.cpp
-build build/Engine/src/Engine/Renderer/VAO.o: compile_cpp ../Engine/src/Engine/Renderer/VAO.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_contact_manager.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_contact_manager.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_polygon_circle_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_polygon_circle_contact.cpp
+build build/Engine/vendor/box2d/src/collision/b2_edge_shape.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_edge_shape.cpp
 build build/Engine/vendor/box2d/src/collision/b2_distance.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_distance.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_polygon_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_polygon_contact.cpp
-build build/Engine/vendor/miniaudio/miniaudio.o: compile_c ../Engine/vendor/miniaudio/miniaudio.c
-build build/Engine/vendor/box2d/src/collision/b2_collide_polygon.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_collide_polygon.cpp
-build build/Engine/vendor/box2d/src/common/b2_settings.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_settings.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_contact.cpp
-build build/Engine/vendor/box2d/src/collision/b2_collision.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_collision.cpp
-build build/Engine/vendor/box2d/src/common/b2_math.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_math.cpp
-build build/Engine/src/Engine/Renderer/VBO.o: compile_cpp ../Engine/src/Engine/Renderer/VBO.cpp
-build build/Engine/Platform/WebGL/WebGLWindow.o: compile_cpp ../Engine/Platform/WebGL/WebGLWindow.cpp
-build build/Engine/vendor/box2d/src/common/b2_block_allocator.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_block_allocator.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_prismatic_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_prismatic_joint.cpp
-build build/Engine/src/Engine/Renderer/Shader.o: compile_cpp ../Engine/src/Engine/Renderer/Shader.cpp
-build build/Engine/vendor/box2d/src/collision/b2_broad_phase.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_broad_phase.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_edge_circle_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_edge_circle_contact.cpp
-build build/Engine/vendor/box2d/src/rope/b2_rope.o: compile_cpp ../Engine/vendor/box2d/src/rope/b2_rope.cpp
-build build/Engine/vendor/box2d/src/common/b2_stack_allocator.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_stack_allocator.cpp
-build build/Engine/src/Engine/Core/Window.o: compile_cpp ../Engine/src/Engine/Core/Window.cpp
+build build/Engine/vendor/box2d/src/common/b2_timer.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_timer.cpp
 build build/Engine/vendor/box2d/src/dynamics/b2_world_callbacks.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_world_callbacks.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_weld_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_weld_joint.cpp
-build build/Engine/vendor/box2d/src/collision/b2_chain_shape.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_chain_shape.cpp
-build build/Engine/vendor/stb/stb_image.o: compile_c ../Engine/vendor/stb/stb_image.c
-build build/Game/src/main.o: compile_cpp ../Game/src/main.cpp
-build build/Engine/vendor/FelineLoad/feline_load.o: compile_c ../Engine/vendor/FelineLoad/feline_load.c
-build build/Engine/vendor/box2d/src/dynamics/b2_revolute_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_revolute_joint.cpp
-build build/Engine/vendor/box2d/src/dynamics/b2_distance_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_distance_joint.cpp
+build build/Engine/src/Engine/Core/Camera.o: compile_cpp ../Engine/src/Engine/Core/Camera.cpp
+build build/Engine/vendor/box2d/src/common/b2_math.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_math.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_pulley_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_pulley_joint.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_world.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_world.cpp
+build build/Game/src/Map.o: compile_cpp ../Game/src/Map.cpp
+build build/Engine/vendor/box2d/src/common/b2_block_allocator.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_block_allocator.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_edge_circle_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_edge_circle_contact.cpp
+build build/Engine/src/Engine/Renderer/VBO.o: compile_cpp ../Engine/src/Engine/Renderer/VBO.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_edge_polygon_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_edge_polygon_contact.cpp
+build build/Engine/vendor/box2d/src/common/b2_stack_allocator.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_stack_allocator.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_circle_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_circle_contact.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_joint.cpp
+build build/Engine/vendor/box2d/src/collision/b2_collide_circle.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_collide_circle.cpp
+build build/Engine/vendor/miniaudio/miniaudio.o: compile_c ../Engine/vendor/miniaudio/miniaudio.c
+build build/Engine/src/Engine/Core/Window.o: compile_cpp ../Engine/src/Engine/Core/Window.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_chain_polygon_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_chain_polygon_contact.cpp
+build build/Engine/vendor/box2d/src/collision/b2_broad_phase.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_broad_phase.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_contact.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_polygon_circle_contact.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_polygon_circle_contact.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_friction_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_friction_joint.cpp
+build build/Engine/vendor/box2d/src/collision/b2_collide_edge.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_collide_edge.cpp
+build build/Engine/src/Engine/Core/Application.o: compile_cpp ../Engine/src/Engine/Core/Application.cpp
+build build/Engine/vendor/box2d/src/rope/b2_rope.o: compile_cpp ../Engine/vendor/box2d/src/rope/b2_rope.cpp
+build build/Engine/src/Engine/Core/Input.o: compile_cpp ../Engine/src/Engine/Core/Input.cpp
 build build/Engine/vendor/box2d/src/dynamics/b2_motor_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_motor_joint.cpp
-build build/Engine/src/Engine/Core/Audio.o: compile_cpp ../Engine/src/Engine/Core/Audio.cpp
-build build/Engine/vendor/box2d/src/common/b2_draw.o: compile_cpp ../Engine/vendor/box2d/src/common/b2_draw.cpp
-build build/Engine/vendor/box2d/src/collision/b2_time_of_impact.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_time_of_impact.cpp
-build build/Engine/vendor/box2d/src/collision/b2_polygon_shape.o: compile_cpp ../Engine/vendor/box2d/src/collision/b2_polygon_shape.cpp
+build build/Engine/vendor/box2d/src/dynamics/b2_wheel_joint.o: compile_cpp ../Engine/vendor/box2d/src/dynamics/b2_wheel_joint.cpp
 
-build dist/index.html: link build/Engine/src/Engine/Renderer/EBO.o build/Engine/vendor/box2d/src/collision/b2_collide_circle.o build/Engine/vendor/box2d/src/collision/b2_collide_edge.o build/Engine/vendor/box2d/src/dynamics/b2_fixture.o build/Engine/src/Engine/Core/Application.o build/Engine/src/Engine/main.o build/Engine/src/Engine/Renderer/Texture.o build/Engine/vendor/box2d/src/dynamics/b2_circle_contact.o build/Engine/vendor/box2d/src/dynamics/b2_joint.o build/Engine/vendor/box2d/src/dynamics/b2_contact_solver.o build/Engine/vendor/box2d/src/dynamics/b2_world.o build/Engine/vendor/box2d/src/dynamics/b2_body.o build/Engine/vendor/box2d/src/dynamics/b2_chain_polygon_contact.o build/Engine/src/Engine/Math/Math.o build/Engine/vendor/box2d/src/dynamics/b2_wheel_joint.o build/Engine/vendor/box2d/src/collision/b2_edge_shape.o build/Engine/src/Engine/Core/Input.o build/Engine/vendor/box2d/src/dynamics/b2_edge_polygon_contact.o build/Engine/src/Engine/Renderer/Renderer2D.o build/Engine/vendor/box2d/src/dynamics/b2_gear_joint.o build/Engine/vendor/box2d/src/collision/b2_circle_shape.o build/Engine/vendor/box2d/src/dynamics/b2_chain_circle_contact.o build/Engine/vendor/box2d/src/dynamics/b2_friction_joint.o build/Engine/vendor/box2d/src/dynamics/b2_pulley_joint.o build/Engine/src/Engine/Core/Camera.o build/Engine/vendor/box2d/src/common/b2_timer.o build/Engine/vendor/box2d/src/dynamics/b2_island.o build/Engine/vendor/box2d/src/dynamics/b2_mouse_joint.o build/Engine/vendor/box2d/src/collision/b2_dynamic_tree.o build/Engine/src/Engine/Renderer/VAO.o build/Engine/vendor/box2d/src/dynamics/b2_contact_manager.o build/Engine/vendor/box2d/src/dynamics/b2_polygon_circle_contact.o build/Engine/vendor/box2d/src/collision/b2_distance.o build/Engine/vendor/box2d/src/dynamics/b2_polygon_contact.o build/Engine/vendor/miniaudio/miniaudio.o build/Engine/vendor/box2d/src/collision/b2_collide_polygon.o build/Engine/vendor/box2d/src/common/b2_settings.o build/Engine/vendor/box2d/src/dynamics/b2_contact.o build/Engine/vendor/box2d/src/collision/b2_collision.o build/Engine/vendor/box2d/src/common/b2_math.o build/Engine/src/Engine/Renderer/VBO.o build/Engine/Platform/WebGL/WebGLWindow.o build/Engine/vendor/box2d/src/common/b2_block_allocator.o build/Engine/vendor/box2d/src/dynamics/b2_prismatic_joint.o build/Engine/src/Engine/Renderer/Shader.o build/Engine/vendor/box2d/src/collision/b2_broad_phase.o build/Engine/vendor/box2d/src/dynamics/b2_edge_circle_contact.o build/Engine/vendor/box2d/src/rope/b2_rope.o build/Engine/vendor/box2d/src/common/b2_stack_allocator.o build/Engine/src/Engine/Core/Window.o build/Engine/vendor/box2d/src/dynamics/b2_world_callbacks.o build/Engine/vendor/box2d/src/dynamics/b2_weld_joint.o build/Engine/vendor/box2d/src/collision/b2_chain_shape.o build/Engine/vendor/stb/stb_image.o build/Game/src/main.o build/Engine/vendor/FelineLoad/feline_load.o build/Engine/vendor/box2d/src/dynamics/b2_revolute_joint.o build/Engine/vendor/box2d/src/dynamics/b2_distance_joint.o build/Engine/vendor/box2d/src/dynamics/b2_motor_joint.o build/Engine/src/Engine/Core/Audio.o build/Engine/vendor/box2d/src/common/b2_draw.o build/Engine/vendor/box2d/src/collision/b2_time_of_impact.o build/Engine/vendor/box2d/src/collision/b2_polygon_shape.o
+build dist/index.html: link build/Engine/src/Engine/Renderer/Renderer2D.o build/Engine/vendor/box2d/src/dynamics/b2_polygon_contact.o build/Engine/src/Engine/Renderer/Texture.o build/Game/src/main.o build/Engine/vendor/box2d/src/dynamics/b2_distance_joint.o build/Engine/src/Engine/Core/Audio.o build/Engine/vendor/box2d/src/collision/b2_chain_shape.o build/Engine/vendor/box2d/src/dynamics/b2_island.o build/Engine/vendor/box2d/src/collision/b2_collide_polygon.o build/Engine/vendor/box2d/src/collision/b2_polygon_shape.o build/Engine/vendor/box2d/src/collision/b2_dynamic_tree.o build/Engine/vendor/box2d/src/common/b2_settings.o build/Engine/vendor/box2d/src/dynamics/b2_contact_solver.o build/Engine/vendor/box2d/src/dynamics/b2_contact_manager.o build/Engine/vendor/box2d/src/dynamics/b2_fixture.o build/Engine/src/Engine/Renderer/Shader.o build/Engine/vendor/box2d/src/dynamics/b2_revolute_joint.o build/Engine/src/Engine/Renderer/VAO.o build/Engine/src/Engine/main.o build/Engine/src/Engine/Renderer/EBO.o build/Engine/vendor/box2d/src/dynamics/b2_prismatic_joint.o build/Engine/src/Engine/Math/Math.o build/Engine/vendor/box2d/src/collision/b2_collision.o build/Engine/vendor/box2d/src/collision/b2_time_of_impact.o build/Engine/vendor/box2d/src/dynamics/b2_body.o build/Engine/vendor/stb/stb_image.o build/Engine/vendor/box2d/src/dynamics/b2_mouse_joint.o build/Engine/vendor/box2d/src/common/b2_draw.o build/Engine/vendor/FelineLoad/feline_load.o build/Engine/vendor/box2d/src/dynamics/b2_gear_joint.o build/Engine/vendor/box2d/src/dynamics/b2_weld_joint.o build/Engine/Platform/WebGL/WebGLWindow.o build/Engine/vendor/box2d/src/collision/b2_circle_shape.o build/Engine/vendor/box2d/src/dynamics/b2_chain_circle_contact.o build/Engine/vendor/box2d/src/collision/b2_edge_shape.o build/Engine/vendor/box2d/src/collision/b2_distance.o build/Engine/vendor/box2d/src/common/b2_timer.o build/Engine/vendor/box2d/src/dynamics/b2_world_callbacks.o build/Engine/src/Engine/Core/Camera.o build/Engine/vendor/box2d/src/common/b2_math.o build/Engine/vendor/box2d/src/dynamics/b2_pulley_joint.o build/Engine/vendor/box2d/src/dynamics/b2_world.o build/Game/src/Map.o build/Engine/vendor/box2d/src/common/b2_block_allocator.o build/Engine/vendor/box2d/src/dynamics/b2_edge_circle_contact.o build/Engine/src/Engine/Renderer/VBO.o build/Engine/vendor/box2d/src/dynamics/b2_edge_polygon_contact.o build/Engine/vendor/box2d/src/common/b2_stack_allocator.o build/Engine/vendor/box2d/src/dynamics/b2_circle_contact.o build/Engine/vendor/box2d/src/dynamics/b2_joint.o build/Engine/vendor/box2d/src/collision/b2_collide_circle.o build/Engine/vendor/miniaudio/miniaudio.o build/Engine/src/Engine/Core/Window.o build/Engine/vendor/box2d/src/dynamics/b2_chain_polygon_contact.o build/Engine/vendor/box2d/src/collision/b2_broad_phase.o build/Engine/vendor/box2d/src/dynamics/b2_contact.o build/Engine/vendor/box2d/src/dynamics/b2_polygon_circle_contact.o build/Engine/vendor/box2d/src/dynamics/b2_friction_joint.o build/Engine/vendor/box2d/src/collision/b2_collide_edge.o build/Engine/src/Engine/Core/Application.o build/Engine/vendor/box2d/src/rope/b2_rope.o build/Engine/src/Engine/Core/Input.o build/Engine/vendor/box2d/src/dynamics/b2_motor_joint.o build/Engine/vendor/box2d/src/dynamics/b2_wheel_joint.o
 
 default dist/index.html
