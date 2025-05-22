@@ -7,7 +7,11 @@
 #include "Engine/Renderer/VAO.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Core/Camera.h"
+#include <box2d/b2_world.h>
 #include "ecs/ecs.h"
+#include <typeinfo>
+#include <utility>
+#include "Engine/Core/Audio.h"
 
 namespace Engine
 {
@@ -23,8 +27,38 @@ namespace Engine
 
 		void ResizeGL(uint32_t w, uint32_t h);
 
+		ecs::Entity NewEntity();
+
+		template<typename T, typename... Args>
+		T& NewCommponent(ecs::Entity entity, Args&&... args)
+		{
+			T& component = entity.Add<T>(std::forward<Args>(args)...);
+
+			InitCommponent(entity, &component, typeid(T).name());
+
+			return component;
+		}
+
+		
+
+		void AddUpdateFunc(std::function<void(float, ecs::Manager&)> func)
+		{
+			m_UpdateFuncList.push_back(func);
+		}
+
+		ecs::Manager& GetManager()
+		{
+			return m_Manager;
+		}
+
 	private:
 		
+		void InitCommponent(ecs::Entity entity, void* commp, const std::string type_name);
+
+		Ref<Audio> m_Audio;
+
+		b2World* m_World;
+
 		Ref<Shader> m_Shader;
 		Ref<VAO> VAO1;
 		Ref<VBO> VBO1;
@@ -35,6 +69,7 @@ namespace Engine
 		ecs::Entity m_Player;
 
 		Camera m_Camera;
+		std::vector<std::function<void(float, ecs::Manager&)>> m_UpdateFuncList;
 
 		bool m_fistFime = true;
 		bool m_Running = true;

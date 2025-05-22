@@ -19,7 +19,9 @@ project "Engine"
 		"vendor/FelineLoad/feline_load.c",
 		
 		"vendor/stb/stb_image.h",
-		"vendor/stb/stb_image.c"
+		"vendor/stb/stb_image.c",
+		
+		"vendor/miniaudio/miniaudio.c"
     }
 	
 	-- Include external directories
@@ -32,12 +34,15 @@ project "Engine"
 		"vendor/glm",
 		"vendor/FelineLoad",
 		"%{wks.location}/Engine/vendor/stb",
-		"%{wks.location}/Engine/vendor/ecs/include"
+		"%{wks.location}/Engine/vendor/ecs/include",
+		"%{wks.location}/Engine/vendor/box2d/include",
+		"vendor/miniaudio"
     }
 	
 	-- Link dependencies
     links
     {
+		"Box2D"
     }
 	
 	defines

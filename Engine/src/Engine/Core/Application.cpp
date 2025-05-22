@@ -8,6 +8,14 @@
 #include "Input.h"
 #include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Math/Math.h"
+#include "Engine/Core/Components.h"
+#include "Engine/Core/Audio.h"
+
+// Box2D
+#include "box2d/b2_world.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_fixture.h"
+#include "box2d/b2_polygon_shape.h"
 
 // Vertex Shader source code
 // Vertices coordinates
@@ -50,43 +58,83 @@ namespace Engine
 {
 	Application* Application::s_Instance = nullptr;
 
-	GLuint framebuffer;
-	GLuint texture;
-	GLuint renderbuffer;
-	GLuint bloomTexture;
-
-	struct TransformComponent
-	{
-		glm::vec3 Position;
-		glm::vec3 Rotation;
-		glm::vec3 Scale;
-	};
-
-	struct Renderer
-	{
-		glm::vec4 colour;
-	};
 
 	Application::Application()
 		: m_Camera(19, 18, glm::vec3(0.0f, 0.0f, 2.0f))
 	{
 		Input::Init();
 		feline_load_init();
+		Audio::Init();
 		s_Instance = this;
 		m_Running = true;
 		m_Window = Window::New();
 
+		m_World = new b2World(b2Vec2(0.0f, -10.0f));
+
 		m_Manager = ecs::Manager();
-		m_Player = m_Manager.CreateEntity();
 		m_Manager.Refresh();
 
-		m_Player.Add<TransformComponent>(glm::vec3(0), glm::vec3(0), glm::vec3(1));
-		m_Player.Add<Renderer>(glm::vec4(1, 0, 0, 1));
+		//m_Player.Add<Components::TransformComponent>(glm::vec3(0), glm::vec3(0), glm::vec3(1));
+		//m_Player.Add<Components::Renderer>(glm::vec4(1, 0, 0, 1));
 		m_Manager.Refresh();
+	}
+
+	static void SetupRB(void* commp, b2World* m_World, ecs::Entity entity)
+	{
+		Components::Rigidbody2DComponent* rb = static_cast<Components::Rigidbody2DComponent*>(commp);
+		b2BodyDef bodyDef;
+		bodyDef.type = (b2BodyType)rb->Type;
+		bodyDef.position.Set(entity.Get<Components::TransformComponent>().Position.x, entity.Get<Components::TransformComponent>().Position.y);
+		bodyDef.angle = glm::radians(entity.Get<Components::TransformComponent>().Rotation.z);
+		bodyDef.linearVelocity.Set(0, 0);
+		bodyDef.angularVelocity = 0.0f;
+		bodyDef.fixedRotation = rb->FixedRotation;
+		b2Body* body = m_World->CreateBody(&bodyDef);
+		rb->RuntimeBody = body;
+	}
+
+	void Application::InitCommponent(ecs::Entity entity, void* commp, const std::string type_name)
+	{
+		
+		std::string Rigidbody2DComponent = typeid(Components::Rigidbody2DComponent).name();
+		if (type_name == Rigidbody2DComponent)
+		{
+			SetupRB(commp, m_World, entity);
+		}
+		if (type_name == typeid(Components::BoxCollider2DComponent).name())
+		{
+			
+			Components::Rigidbody2DComponent rb2D = entity.Get<Components::Rigidbody2DComponent>();
+			if (rb2D.RuntimeBody == nullptr)
+			{
+				return;
+			}
+			Components::BoxCollider2DComponent* box = static_cast<Components::BoxCollider2DComponent*>(commp);
+			b2PolygonShape boxShape;
+			
+			boxShape.SetAsBox(entity.Get<Components::TransformComponent>().Scale.x, entity.Get<Components::TransformComponent>().Scale.y);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &boxShape;
+			fixtureDef.density = box->Density;
+			fixtureDef.friction = box->Friction;
+			fixtureDef.restitution = box->Friction;
+			fixtureDef.restitutionThreshold = box->RestitutionThreshold;
+			((b2Body*)rb2D.RuntimeBody)->CreateFixture(&fixtureDef);
+		}
+	}
+
+	ecs::Entity Application::NewEntity()
+	{
+		ecs::Entity entity = m_Manager.CreateEntity();
+
+
+
+		return entity;
 	}
 
 	Application::~Application() 
 	{
+		Audio::Shutdown();
 		Renderer2D::Shutdown();
 		feline_load_shutdown();
 	}
@@ -135,9 +183,13 @@ namespace Engine
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		m_Audio = Audio::Create("assets/audio/sound.wav");
+
 	}
 
 	static float timer = 0.0f;
+	static float timer2 = 0.0f;
 
 	static float rotation = 0.0f;
 	void Application::Update()
@@ -154,24 +206,16 @@ namespace Engine
 		glClearColor(red, green, blue, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if (Input::IsPressed('w'))
+		if (timer2 >= 1)
 		{
-			m_Camera.Position.y += 5 * dt;
-		}
+			m_Audio->SetLoop(true);
+			m_Audio->Play();
 
-		if (Input::IsPressed('s'))
-		{
-			m_Camera.Position.y -= 5 * dt;
+			//timer2 = 0;
 		}
-
-		if (Input::IsPressed('a'))
+		else
 		{
-			m_Camera.Position.x -= 5 * dt;
-		}
-
-		if (Input::IsPressed('d'))
-		{
-			m_Camera.Position.x += 5 * dt;
+			timer2 += dt;
 		}
 
 		rotation += dt * 21;
@@ -211,7 +255,11 @@ namespace Engine
 
 		Renderer2D::BeginScene(m_Camera.Matrix(90, 0.1f, 100.0f));
 
-		for (auto [e, pos, renderer] : m_Manager.EntitiesWith<TransformComponent, Renderer>()) {
+		for (auto& func : m_UpdateFuncList) {
+			func(dt, m_Manager);
+		}
+
+		for (auto [e, pos, renderer] : m_Manager.EntitiesWith<Components::TransformComponent, Components::Renderer>()) {
 			glm::vec3 position = pos.Position;
 			glm::vec3 rotation = pos.Rotation;
 			glm::vec3 scale = pos.Scale;
@@ -220,8 +268,33 @@ namespace Engine
 				scale,
 				rotation
 			);
-			Renderer2D::DrawQuad(transform, m_Texture, renderer.colour);
+			Renderer2D::DrawQuad(transform, renderer.colour);
 		}
+
+		for (auto [e, rb2d, pos] : m_Manager.EntitiesWith<Components::Rigidbody2DComponent, Components::TransformComponent>())
+		{
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+
+			auto position = body->GetPosition();
+			position.x = pos.Position.x;
+			position.y = pos.Position.y;
+			body->SetTransform(position, glm::radians(pos.Rotation.z));
+		}
+
+		const int32_t velocityIterations = 6;
+		const int32_t positionIterations = 2;
+		m_World->Step(dt, velocityIterations, positionIterations);
+
+		for (auto [e, rb2d, pos] : m_Manager.EntitiesWith<Components::Rigidbody2DComponent, Components::TransformComponent>())
+		{
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+
+			const auto& position = body->GetPosition();
+			pos.Position.x = position.x;
+			pos.Position.y = position.y;
+			pos.Rotation.z = glm::degrees(body->GetAngle());
+		}
+
 		m_Manager.Refresh();
 
 		/*transform = Math::ComposeTransform(
@@ -243,4 +316,5 @@ namespace Engine
 	{
 		m_Window->ResizeGL(w, h);
 	}
+	
 }

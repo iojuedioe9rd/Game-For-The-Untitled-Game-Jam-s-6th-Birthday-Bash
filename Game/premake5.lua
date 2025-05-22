@@ -17,7 +17,8 @@ project "Game"
 		"%{wks.location}/Engine/src",
 		"%{wks.location}/Engine/vendor/glm",
 		"%{wks.location}/Engine/vendor/sdl3/include",
-		"%{wks.location}/Engine/vendor/ecs/include"
+		"%{wks.location}/Engine/vendor/ecs/include",
+		"%{wks.location}/Engine/vendor/box2d/include"
     }
     
     -- Link dependencies

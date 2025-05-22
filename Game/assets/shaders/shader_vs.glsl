@@ -1,4 +1,3 @@
-// assets/shaders/2d_vs.glsl
 #version 300 es
 precision mediump float;
 

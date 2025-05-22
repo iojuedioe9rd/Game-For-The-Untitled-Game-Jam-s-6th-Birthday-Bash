@@ -4,13 +4,15 @@ import os
 source_dirs = [
     "../Game/src",
     "../Engine/src",
-    "../Engine/Platform/WebGL"
+    "../Engine/Platform/WebGL",
+    "../Engine/vendor/box2d/src",
 ]
 
 # Additional source files not in the source_dirs (like vendor C files)
 source_files = [
     "../Engine/vendor/FelineLoad/feline_load.c",
-    "../Engine/vendor/stb/stb_image.c"
+    "../Engine/vendor/stb/stb_image.c",
+    "../Engine/vendor/miniaudio/miniaudio.c"
 ]
 
 # Compiler flags for emcc
@@ -28,7 +30,10 @@ args = [
     "-s", "USE_WEBGL2=1",
     "-s", "FULL_ES3=1",
     "-Wall",
-    "-O0"
+    "-O0",
+    "-Wunused-command-line-argument",
+    "-sALLOW_TABLE_GROWTH=1",
+    "-sASYNCIFY=1"
 ]
 
 # Include directories
@@ -39,7 +44,10 @@ include_dirs = [
     "../Engine/vendor/FelineLoad",
     "../Engine/vendor/stb",
     "../Engine/vendor/glm",
-    "../Engine/vendor/ecs/include"
+    "../Engine/vendor/ecs/include",
+    "../Engine/vendor/box2d/include",
+    "../Engine/vendor/box2d/src",
+    "../Engine/vendor/miniaudio"
 ]
 
 # Library directories

@@ -9,5 +9,6 @@ workspace "Game"
 		"STBIDEF=extern ENGINE_API"
 	}
 
+include "Engine/vendor/box2d"
 include "Game"
 include "Engine"
