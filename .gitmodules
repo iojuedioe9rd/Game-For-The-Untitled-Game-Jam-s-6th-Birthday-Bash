@@ -4,3 +4,6 @@
 [submodule "Engine/vendor/ecs"]
 	path = Engine/vendor/ecs
 	url = https://github.com/iojuedioe9rd/ecs
+[submodule "Engine/vendor/box2d"]
+	path = Engine/vendor/box2d
+	url = https://github.com/iojuedioe9rd/box2d
