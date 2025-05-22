@@ -7,3 +7,6 @@
 [submodule "Engine/vendor/box2d"]
 	path = Engine/vendor/box2d
 	url = https://github.com/iojuedioe9rd/box2d
+[submodule "Engine/vendor/json"]
+	path = Engine/vendor/json
+	url = https://github.com/iojuedioe9rd/json
