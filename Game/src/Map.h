@@ -26,6 +26,7 @@ private:
 
 	void HandleData(int x, int y, int width, int height, uint8_t data);
 	void HandleWall(int x, int y, int width, int height);
+	void HandleText(int x, int y, int width, int height, int id);
 	void HandlePlayer(int x, int y, int width, int height);
 	void HandleBadGuy(int x, int y, int width, int height);
 };

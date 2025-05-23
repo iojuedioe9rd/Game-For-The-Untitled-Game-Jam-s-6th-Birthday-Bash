@@ -30,7 +30,6 @@ args = [
     "-s", "USE_WEBGL2=1",
     "-s", "FULL_ES3=1",
     "-Wall",
-    "-O0",
     "-Wunused-command-line-argument",
     "-sALLOW_TABLE_GROWTH=1",
     "-sASYNCIFY=1"
@@ -108,7 +107,7 @@ def generate_ninja():
 
         # Link rule with libraries and --preload-file assets
         f.write("rule link\n")
-        f.write(f"  command = cmd /c emcc {lib_dir_flags} $in -o dist/index.html {lib_flags} {compiler_args} --preload-file assets\n\n")
+        f.write(f"  command = cmd /c emcc {lib_dir_flags} $in -o dist/index.html {lib_flags} {compiler_args} --shell-file shell.html --preload-file assets\n\n")
 
         # Build object files
         for src_file in source_files_list:

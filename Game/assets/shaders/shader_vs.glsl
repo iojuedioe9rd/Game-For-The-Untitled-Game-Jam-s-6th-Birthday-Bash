@@ -11,11 +11,14 @@ uniform mat4 u_ViewProjection;
 flat   out int   v_TexID;    // pass an integer downstream
        out vec2  v_TexCoord;
        out vec4  v_Color;
+       out vec4  v_pos;
+
 
 void main() {
     v_TexCoord = a_TexCoord;
     v_Color    = a_Color;
     // cast float -> int for flat interpolation
     v_TexID    = int(a_TexID);
-    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+    v_pos = u_ViewProjection * vec4(a_Position, 1.0);
+    gl_Position = v_pos;
 }

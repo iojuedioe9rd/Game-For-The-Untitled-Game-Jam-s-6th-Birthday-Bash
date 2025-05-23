@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map.tmj",
+    "activeFile": "base.tsx",
     "expandedProjectPaths": [
         "."
     ],
@@ -22,8 +22,8 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": -34,
-                "y": 1112
+                "x": 2734,
+                "y": 2228
             }
         },
         "map.tmx": {
@@ -46,8 +46,8 @@
     ],
     "project": "untitled.tiled-project",
     "recentFiles": [
-        "base.tsx",
         "map.tmj",
+        "base.tsx",
         "map.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",

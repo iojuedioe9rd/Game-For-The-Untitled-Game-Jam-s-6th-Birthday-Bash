@@ -104,8 +104,8 @@ namespace Engine
 		if (type_name == typeid(Components::BoxCollider2DComponent).name())
 		{
 			
-			Components::Rigidbody2DComponent rb2D = entity.Get<Components::Rigidbody2DComponent>();
-			if (rb2D.RuntimeBody == nullptr)
+			Components::Rigidbody2DComponent& rb2D = entity.Get<Components::Rigidbody2DComponent>();
+			if (rb2D.RuntimeBody.get() == nullptr)
 			{
 				return;
 			}
@@ -119,7 +119,7 @@ namespace Engine
 			fixtureDef.friction = box->Friction;
 			fixtureDef.restitution = box->Friction;
 			fixtureDef.restitutionThreshold = box->RestitutionThreshold;
-			((b2Body*)rb2D.RuntimeBody)->CreateFixture(&fixtureDef);
+			((b2Body*)rb2D.RuntimeBody.get())->CreateFixture(&fixtureDef);
 		}
 	}
 
@@ -152,8 +152,8 @@ namespace Engine
 	{
 		Renderer2D::Init();
 		m_Shader = Shader::Create("assets/shaders/shader_vs.glsl", "assets/shaders/shader_fs.glsl");
-		m_Texture = Texture::Create("assets/textures/Player.png", GL_TEXTURE_2D, GL_TEXTURE0);
-		m_Texture->texUnit(m_Shader, "tex0", 0);
+		//m_Texture = Texture::Create("assets/textures/Player.png", GL_TEXTURE_2D, GL_TEXTURE0);
+		//m_Texture->texUnit(m_Shader, "tex0", 0);
 		Camera.Resize(m_Window->GetWidth(), m_Window->GetHeight());
 		Camera.Position.z = 10.f;
 
@@ -184,7 +184,10 @@ namespace Engine
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		m_Audio = Audio::Create("assets/audio/sound.wav");
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		m_Audio = Audio::Create("assets/audio/the beginning/auto.wav");
 
 	}
 
@@ -251,7 +254,6 @@ namespace Engine
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 		// Bind texture and set uniform for scale
-		m_Texture->Bind();
 		GLuint uniID = glGetUniformLocation(m_Shader->ID, "scale");
 		glUniform1f(uniID, 1);
 
@@ -270,19 +272,49 @@ namespace Engine
 				scale,
 				rotation
 			);
-			Renderer2D::DrawQuad(transform, renderer.colour);
+
+			if (renderer.texture)
+			{
+				Renderer2D::DrawQuad(transform, renderer.texture, renderer.colour);
+			}
+			else
+			{
+				Renderer2D::DrawQuad(transform, renderer.colour);
+			}
+
+			//Renderer2D::DrawQuad(transform, renderer.colour);
 		}
 
-		for (auto [e, rb2d, pos] : m_Manager.EntitiesWith<Components::Rigidbody2DComponent, Components::TransformComponent>())
+		for (auto [e, rb2d, pos, box] : m_Manager.EntitiesWith<Components::Rigidbody2DComponent, Components::TransformComponent, Components::BoxCollider2DComponent>())
 		{
-			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			b2Body* body = (b2Body*)rb2d.RuntimeBody.get();
 
 			auto position = body->GetPosition();
 			position.x = pos.Position.x;
 			position.y = pos.Position.y;
 			body->ApplyForceToCenter(b2Vec2(0, -.5f), true);
 			body->SetTransform(position, glm::radians(pos.Rotation.z));
+			body->DestroyFixture(body->GetFixtureList());
+			b2PolygonShape boxShape;
+
+			boxShape.SetAsBox(pos.Scale.x * box.Size.x, pos.Scale.y * box.Size.y);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &boxShape;
+			fixtureDef.density = box.Density;
+			fixtureDef.friction = box.Friction;
+			fixtureDef.restitution = box.Friction;
+			fixtureDef.restitutionThreshold = box.RestitutionThreshold;
+			body->CreateFixture(&fixtureDef);
+
 		}
+
+		for (auto& rb2d : m_RigidBodiesToRemove)
+		{
+			b2Body* body = (b2Body*)rb2d.RuntimeBody.get();
+			m_World->DestroyBody(body);
+		}
+
+		m_RigidBodiesToRemove.erase(m_RigidBodiesToRemove.begin(), m_RigidBodiesToRemove.end());
 
 		const int32_t velocityIterations = 6;
 		const int32_t positionIterations = 2;
@@ -290,7 +322,7 @@ namespace Engine
 
 		for (auto [e, rb2d, pos] : m_Manager.EntitiesWith<Components::Rigidbody2DComponent, Components::TransformComponent>())
 		{
-			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			b2Body* body = (b2Body*)rb2d.RuntimeBody.get();
 
 			const auto& position = body->GetPosition();
 			pos.Position.x = position.x;

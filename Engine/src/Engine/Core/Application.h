@@ -12,6 +12,7 @@
 #include <typeinfo>
 #include <utility>
 #include "Engine/Core/Audio.h"
+#include "Components.h"
 
 namespace Engine
 {
@@ -24,6 +25,7 @@ namespace Engine
 		void Update();
 
 		static Application& Get() { return *s_Instance; }
+		static Window& GetWindow() { return *s_Instance->m_Window; }
 
 		void ResizeGL(uint32_t w, uint32_t h);
 
@@ -53,9 +55,13 @@ namespace Engine
 
 		Camera Camera;
 
+		std::vector<Components::Rigidbody2DComponent> m_RigidBodiesToRemove;
+
 	private:
 		
 		void InitCommponent(ecs::Entity entity, void* commp, const std::string type_name);
+
+		
 
 		Ref<Audio> m_Audio;
 
@@ -65,7 +71,6 @@ namespace Engine
 		Ref<VAO> VAO1;
 		Ref<VBO> VBO1;
 		Ref<EBO> EBO1;
-		Ref<Texture> m_Texture;
 
 		ecs::Manager m_Manager;
 		ecs::Entity m_Player;

@@ -61,6 +61,9 @@ namespace Engine {
 		SafeObject(T obj) : isGood(true), object(obj) {}
 
 		operator bool() const { return isGood; }
+		operator T() { return object; }
+		operator const T() const { return object; }
+		operator T& () { return object; }
 
 		T& get() { return object; }
 		const T& get() const { return object; }

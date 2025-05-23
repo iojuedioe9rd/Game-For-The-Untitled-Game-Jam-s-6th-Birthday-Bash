@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Base.h"
 #include <glm/glm.hpp>
+#include <box2d/b2_body.h>
 
 namespace Engine::Components
 {
@@ -156,8 +157,9 @@ namespace Engine::Components
 	struct ENGINE_API Renderer
 	{
 		glm::vec4 colour;
-		Renderer(const glm::vec4& color = glm::vec4(1.0f))
-			: colour(color) {
+		Ref<Texture> texture;
+		Renderer(const glm::vec4& color = glm::vec4(1.0f), Ref<Texture> tex = Ref<Texture>())
+			: colour(color), texture(tex) {
 		}
 	};
 
@@ -175,7 +177,7 @@ namespace Engine::Components
 		bool FixedRotation = false;
 
 		// Storage for runtime
-		void* RuntimeBody = nullptr;
+		SafeObject<void*> RuntimeBody = nullptr;
 	};
 
 	

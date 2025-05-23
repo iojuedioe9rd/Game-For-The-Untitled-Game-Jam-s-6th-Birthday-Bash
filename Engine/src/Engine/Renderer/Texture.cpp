@@ -3,16 +3,28 @@
 #include "stb_image.h"
 #include "feline_load.h"
 #include <iostream> // For error messages
+#include <unordered_map>
 
 namespace Engine
 {
+	static std::unordered_map<std::string, Ref<Texture>> s_TextureCache;
+    
+
     Ref<Texture> Texture::Create(int width, int height, void* data)
     {
         return CreateRef<Texture>(width, height, data);
     }
+
     Ref<Texture> Texture::Create(const char* filename, uint32_t texType, uint32_t slot)
     {
-        return CreateRef<Texture>(filename, texType, slot);
+		if(s_TextureCache.find(filename) != s_TextureCache.end())
+		{
+			return s_TextureCache[filename];
+		}
+		s_TextureCache[filename] = CreateRef<Texture>(filename, texType, slot);
+        
+
+        return s_TextureCache[filename];
     }
 
     Texture::Texture(int width, int height, void* data)

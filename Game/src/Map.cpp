@@ -7,10 +7,14 @@
 #include <Engine/Core/Components.h>
 #include "Components.h"
 #include "feline_load.h"
+#include "Engine/Renderer/Texture.h"
 
+#define GL_TEXTURE_2D 0x0DE1
+#define GL_TEXTURE0 0x84C0
 #define DATA_WALL 1
 #define DATA_PLAYER 2
 #define DATA_BAD 3
+#define DATA_TEXT1 4
 
 Engine::Ref<Map> Map::Create(const std::string& path)
 {
@@ -120,20 +124,20 @@ void Map::HandleData(int x, int y, int width, int height, uint8_t data)
     case DATA_WALL:   HandleWall(x, y, width, height); break;
     case DATA_PLAYER: HandlePlayer(x, y, width, height); break;
 	case DATA_BAD:    HandleBadGuy(x, y, width, height); break;
+	case DATA_TEXT1:  HandleText(x, y, width, height, 1); break;
     default: break;
     }
 }
 
 void Map::HandleWall(int x, int y, int width, int height)
 {
-    std::cout << "Wall at (" << x << ", " << y << ")\n";
 
 
 	Engine::Application& app = Engine::Application::Get();
 	ecs::Manager& manager = app.GetManager();
 	ecs::Entity wall = manager.CreateEntity();
-	app.NewCommponent<Engine::Components::TransformComponent>(wall, glm::vec3(x, y, 0), glm::vec3(0), glm::vec3(1, 1, 1));
-	app.NewCommponent<Engine::Components::Renderer>(wall, glm::vec4(1, 1, 1, 1));
+	app.NewCommponent<Engine::Components::TransformComponent>(wall, glm::vec3(x * 2, y * 2, 0), glm::vec3(0), glm::vec3(2, 2, 1));
+	app.NewCommponent<Engine::Components::Renderer>(wall, glm::vec4(1, 1, 1, 1), Engine::Texture::Create("assets/textures/wall.png", GL_TEXTURE_2D, GL_TEXTURE0));
 	app.NewCommponent<Engine::Components::Rigidbody2DComponent>(wall, Engine::Components::Rigidbody2DComponent::BodyType::Static);
 	Engine::Components::BoxCollider2DComponent::BoxCollider2DSettings settings = {};
 	settings.Density = 1.0f;
@@ -144,6 +148,28 @@ void Map::HandleWall(int x, int y, int width, int height)
 
 }
 
+void Map::HandleText(int x, int y, int width, int height, int id)
+{
+    Engine::Application& app = Engine::Application::Get();
+    ecs::Manager& manager = app.GetManager();
+    switch (id)
+    {
+    case 1:
+    {
+        Engine::Application& app = Engine::Application::Get();
+        ecs::Manager& manager = app.GetManager();
+        ecs::Entity wall = manager.CreateEntity();
+        float size_x = (1715.0 / 64.0) * 2.0;
+		float size_y = (35.0 / 64.0) * 2.0;
+        app.NewCommponent<Engine::Components::TransformComponent>(wall, glm::vec3(x * 3, y * 2, 0), glm::vec3(0), glm::vec3(size_x, size_y, 1));
+        app.NewCommponent<Engine::Components::Renderer>(wall, glm::vec4(1, 1, 1, 1), Engine::Texture::Create("assets/textures/text1.png", GL_TEXTURE_2D, GL_TEXTURE0));
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 void Map::HandlePlayer(int x, int y, int width, int height)
 {
     std::cout << "Player at (" << x << ", " << y << ")\n";
@@ -151,9 +177,9 @@ void Map::HandlePlayer(int x, int y, int width, int height)
     Engine::Application& app = Engine::Application::Get();
     ecs::Manager& manager = app.GetManager();
     ecs::Entity player = manager.CreateEntity();
-    app.NewCommponent<Engine::Components::TransformComponent>(player, glm::vec3(x, y, 0), glm::vec3(0), glm::vec3(1, 1, 1));
-    app.NewCommponent<Engine::Components::Renderer>(player, glm::vec4(1, 1, 1, 1));
-    app.NewCommponent<Engine::Components::Rigidbody2DComponent>(player, Engine::Components::Rigidbody2DComponent::BodyType::Dynamic);
+    app.NewCommponent<Engine::Components::TransformComponent>(player, glm::vec3(x * 2, y * 2, 0), glm::vec3(0), glm::vec3(2, 3.9f, 1));
+    app.NewCommponent<Engine::Components::Renderer>(player, glm::vec4(1, 1, 1, 1), Engine::Texture::Create("assets/textures/player.png", GL_TEXTURE_2D, GL_TEXTURE0));
+    app.NewCommponent<Engine::Components::Rigidbody2DComponent>(player, Engine::Components::Rigidbody2DComponent::BodyType::Dynamic, true);
     Engine::Components::BoxCollider2DComponent::BoxCollider2DSettings settings = {};
     settings.Density = 1.0f;
     settings.Friction = 0.5f;
@@ -163,22 +189,39 @@ void Map::HandlePlayer(int x, int y, int width, int height)
 	app.NewCommponent<Player>(player);
 }
 
+static void KillBadGuy(float newHealth, float health, float maxHealth, void* userData)
+{
+    Engine::Components::Rigidbody2DComponent& badGuy = *(Engine::Components::Rigidbody2DComponent*)userData;
+
+	Engine::Application& app = Engine::Application::Get();
+	ecs::Manager& manager = app.GetManager();
+
+	
+	{
+		app.m_RigidBodiesToRemove.emplace_back(badGuy);
+		
+	}
+	
+}
+
 void Map::HandleBadGuy(int x, int y, int width, int height)
 {
 	std::cout << "Bad Guy at (" << x << ", " << y << ")\n";
 	Engine::Application& app = Engine::Application::Get();
 	ecs::Manager& manager = app.GetManager();
 	ecs::Entity badGuy = manager.CreateEntity();
-	app.NewCommponent<Engine::Components::TransformComponent>(badGuy, glm::vec3(x, y, 0), glm::vec3(0), glm::vec3(1, 1, 1));
-	app.NewCommponent<Engine::Components::Renderer>(badGuy, glm::vec4(1, 0, 0, 1));
-	app.NewCommponent<Engine::Components::Rigidbody2DComponent>(badGuy, Engine::Components::Rigidbody2DComponent::BodyType::Dynamic);
+	app.NewCommponent<Engine::Components::TransformComponent>(badGuy, glm::vec3(x * 2, y * 2, 0), glm::vec3(0), glm::vec3(2, 2, 1));
+	app.NewCommponent<Engine::Components::Renderer>(badGuy, glm::vec4(1, 1, 1, 1), Engine::Texture::Create("assets/textures/bad.png", GL_TEXTURE_2D, GL_TEXTURE0));
+    Engine::Components::Rigidbody2DComponent& rb2d = app.NewCommponent<Engine::Components::Rigidbody2DComponent>(badGuy, Engine::Components::Rigidbody2DComponent::BodyType::Dynamic);
 	Engine::Components::BoxCollider2DComponent::BoxCollider2DSettings settings = {};
 	settings.Density = 1.0f;
 	settings.Friction = 0.5f;
 	settings.Restitution = 0.0f;
 	settings.RestitutionThreshold = 0.5f;
 	app.NewCommponent<Engine::Components::BoxCollider2DComponent>(badGuy, settings);
-	app.NewCommponent<HealthSystem<float>>(badGuy, 100.0f);
+    HealthSystem<float>& healthSystem = app.NewCommponent<HealthSystem<float>>(badGuy, 100.0f);
+    healthSystem.userData = &rb2d;
+	healthSystem.onDeath = KillBadGuy;
 	app.NewCommponent<BadGuy>(badGuy);
 }
 
