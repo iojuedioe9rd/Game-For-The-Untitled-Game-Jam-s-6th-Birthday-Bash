@@ -19,11 +19,11 @@
             "scaleInEditor": 1
         },
         "map.tmj": {
-            "scale": 0.75,
+            "scale": 0.0625,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 9306.666666666666,
-                "y": 4717.333333333333
+                "x": 4560,
+                "y": 2048
             }
         },
         "map.tmx": {
@@ -46,9 +46,9 @@
     ],
     "project": "untitled.tiled-project",
     "recentFiles": [
-        "map.tmx",
         "map.tmj",
-        "base.tsx"
+        "base.tsx",
+        "map.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.type": 1
