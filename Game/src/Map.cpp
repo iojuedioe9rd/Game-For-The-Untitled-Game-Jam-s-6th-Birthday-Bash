@@ -15,6 +15,9 @@
 #define DATA_PLAYER 2
 #define DATA_BAD 3
 #define DATA_TEXT1 4
+#define DATA_BAD_CAT 5
+#define DATA_GAME_OVER_TRIGGER 6
+#define DATA_DOOR 7
 
 Engine::Ref<Map> Map::Create(const std::string& path)
 {
@@ -121,10 +124,13 @@ void Map::HandleData(int x, int y, int width, int height, uint8_t data)
 {
     switch (data)
     {
-    case DATA_WALL:   HandleWall(x, y, width, height); break;
-    case DATA_PLAYER: HandlePlayer(x, y, width, height); break;
-	case DATA_BAD:    HandleBadGuy(x, y, width, height); break;
-	case DATA_TEXT1:  HandleText(x, y, width, height, 1); break;
+    case DATA_WALL:    HandleWall(x, y, width, height); break;
+    case DATA_PLAYER:  HandlePlayer(x, y, width, height); break;
+	case DATA_BAD:     HandleBadGuy(x, y, width, height); break;
+	case DATA_TEXT1:   HandleText(x, y, width, height, 1); break;
+	case DATA_BAD_CAT: HandleBadCat(x, y, width, height); break;
+	case DATA_GAME_OVER_TRIGGER: HandleGameOverTrigger(x, y, width, height); break;
+	case DATA_DOOR:    HandleDoor(x, y, width, height); break;
     default: break;
     }
 }
@@ -186,7 +192,9 @@ void Map::HandlePlayer(int x, int y, int width, int height)
     settings.Restitution = 0.0f;
     settings.RestitutionThreshold = 0.5f;
     app.NewCommponent<Engine::Components::BoxCollider2DComponent>(player, settings);
-	app.NewCommponent<Player>(player);
+	Player& player_commp = app.NewCommponent<Player>(player);
+    player_commp.jumpSound = Engine::Audio::Create("assets/audio/jump.wav");
+	player_commp.swap = Engine::Audio::Create("assets/audio/swap.wav");
 }
 
 static void KillBadGuy(float newHealth, float health, float maxHealth, void* userData)
@@ -223,6 +231,49 @@ void Map::HandleBadGuy(int x, int y, int width, int height)
     healthSystem.userData = &rb2d;
 	healthSystem.onDeath = KillBadGuy;
 	app.NewCommponent<BadGuy>(badGuy);
+}
+
+void Map::HandleBadCat(int x, int y, int width, int height)
+{
+    //std::cout << "Bad Guy at (" << x << ", " << y << ")\n";
+    Engine::Application& app = Engine::Application::Get();
+    ecs::Manager& manager = app.GetManager();
+    ecs::Entity badGuy = manager.CreateEntity();
+    app.NewCommponent<Engine::Components::TransformComponent>(badGuy, glm::vec3(x * 2, y * 2, 0), glm::vec3(0), glm::vec3(2, 4, 1));
+    app.NewCommponent<Engine::Components::Renderer>(badGuy, glm::vec4(1, 1, 1, 1), Engine::Texture::Create("assets/textures/bad_cat.png", GL_TEXTURE_2D, GL_TEXTURE0));
+    Engine::Components::Rigidbody2DComponent& rb2d = app.NewCommponent<Engine::Components::Rigidbody2DComponent>(badGuy, Engine::Components::Rigidbody2DComponent::BodyType::Dynamic, true);
+    Engine::Components::BoxCollider2DComponent::BoxCollider2DSettings settings = {};
+    settings.Density = 1.0f;
+    settings.Friction = 0.5f;
+    settings.Restitution = 0.0f;
+    settings.RestitutionThreshold = 0.5f;
+    app.NewCommponent<Engine::Components::BoxCollider2DComponent>(badGuy, settings);
+    HealthSystem<float>& healthSystem = app.NewCommponent<HealthSystem<float>>(badGuy, 100.0f);
+    healthSystem.userData = &rb2d;
+    healthSystem.onDeath = KillBadGuy;
+    app.NewCommponent<BadGuy>(badGuy, 9, .5f);
+
+	app.NewCommponent<BadCat>(badGuy);
+}
+
+void Map::HandleGameOverTrigger(int x, int y, int width, int height)
+{
+    Engine::Application& app = Engine::Application::Get();
+    ecs::Manager& manager = app.GetManager();
+    ecs::Entity GameOver = manager.CreateEntity();
+
+	app.NewCommponent<Engine::Components::TransformComponent>(GameOver, glm::vec3(x * 2, y * 2, 0), glm::vec3(0), glm::vec3(2, 2, 1));
+    app.NewCommponent< GameOverTrigger>(GameOver);
+}
+
+void Map::HandleDoor(int x, int y, int width, int height)
+{
+	Engine::Application& app = Engine::Application::Get();
+	ecs::Manager& manager = app.GetManager();
+	ecs::Entity door = manager.CreateEntity();
+	app.NewCommponent<Engine::Components::TransformComponent>(door, glm::vec3(x * 2, y * 2, 0), glm::vec3(0), glm::vec3(2, 4, 1));
+	app.NewCommponent<Engine::Components::Renderer>(door, glm::vec4(1, 1, 1, 1), Engine::Texture::Create("assets/textures/door.png", GL_TEXTURE_2D, GL_TEXTURE0));
+	app.NewCommponent<GameWinTrigger>(door);
 }
 
 Map::~Map()

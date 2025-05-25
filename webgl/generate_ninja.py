@@ -12,7 +12,14 @@ source_dirs = [
 source_files = [
     "../Engine/vendor/FelineLoad/feline_load.c",
     "../Engine/vendor/stb/stb_image.c",
-    "../Engine/vendor/miniaudio/miniaudio.c"
+    "../Engine/vendor/miniaudio/miniaudio.c",
+    "../Engine/vendor/ImGui/imgui.cpp",
+    "../Engine/vendor/ImGui/imgui_draw.cpp",
+    "../Engine/vendor/ImGui/imgui_tables.cpp",
+    "../Engine/vendor/ImGui/imgui_widgets.cpp",
+    "../Engine/vendor/ImGui/imgui_demo.cpp",
+    "../Engine/vendor/ImGui/backends/imgui_impl_opengl3.cpp",
+	"../Engine/vendor/ImGui/backends/imgui_impl_sdl3.cpp",
 ]
 
 # Compiler flags for emcc
@@ -20,6 +27,8 @@ args = [
     "-O3",
     "-msimd128",
     "-msse",
+    "-flto",
+    ""
     "-msse2",
     "-msse3",
     "-mssse3",
@@ -48,6 +57,7 @@ include_dirs = [
     "../Engine/vendor/box2d/src",
     "../Engine/vendor/miniaudio",
     "../Engine/vendor/json/single_include",
+    "../Engine/vendor/imgui"
 ]
 
 # Library directories

@@ -25,7 +25,6 @@
 *.vcxproj
 *.user
 *.filters
-/webgl/dist
 *.sln
 *.bak
 /.vs

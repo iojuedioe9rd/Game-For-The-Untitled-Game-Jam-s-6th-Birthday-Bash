@@ -21,7 +21,10 @@ project "Engine"
 		"vendor/stb/stb_image.h",
 		"vendor/stb/stb_image.c",
 		
-		"vendor/miniaudio/miniaudio.c"
+		"vendor/miniaudio/miniaudio.c",
+		
+		"%{wks.location}/Engine/vendor/Imgui/backends/imgui_impl_opengl3.cpp",
+		"%{wks.location}/Engine/vendor/Imgui/backends/imgui_impl_sdl3.cpp",
     }
 	
 	-- Include external directories
@@ -36,13 +39,15 @@ project "Engine"
 		"%{wks.location}/Engine/vendor/stb",
 		"%{wks.location}/Engine/vendor/ecs/include",
 		"%{wks.location}/Engine/vendor/box2d/include",
-		"vendor/miniaudio"
+		"vendor/miniaudio",
+		"%{wks.location}/Engine/vendor/Imgui"
     }
 	
 	-- Link dependencies
     links
     {
-		"Box2D"
+		"Box2D",
+		"Imgui"
     }
 	
 	defines

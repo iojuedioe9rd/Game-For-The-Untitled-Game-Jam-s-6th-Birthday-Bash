@@ -172,7 +172,7 @@ File feline_load_file(const char* filename, bool null_terminated) {
                 );
             }
             printf("File size: %zu bytes\n", f.size); // Print file size
-            printf("File content: %s\n", f.buffer); // Print file content
+            //printf("File content: %s\n", f.buffer); // Print file content
 
             g_feline_loader->files[g_feline_loader->file_count++] = f;
             return f;
@@ -194,7 +194,7 @@ File feline_load_file(const char* filename, bool null_terminated) {
         g_feline_loader->files[g_feline_loader->file_count++] = loaded;
     }
     printf("File size: %zu bytes\n", loaded.size); // Print file size
-    printf("File content: %s\n", loaded.buffer); // Print file content
+    //printf("File content: %s\n", loaded.buffer); // Print file content
 
     return loaded;
 }

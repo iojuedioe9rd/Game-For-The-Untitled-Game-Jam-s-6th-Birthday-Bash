@@ -13,6 +13,7 @@
 #include <utility>
 #include "Engine/Core/Audio.h"
 #include "Components.h"
+#include <Engine/Renderer/Framebuffer.h>
 
 namespace Engine
 {
@@ -54,16 +55,22 @@ namespace Engine
 		}
 
 		Camera Camera;
-
+		bool isWining = 0;
 		std::vector<Components::Rigidbody2DComponent> m_RigidBodiesToRemove;
+		Ref<Audio> m_Audio;
 
 	private:
 		
 		void InitCommponent(ecs::Entity entity, void* commp, const std::string type_name);
 
-		
+		Ref<Shader> m_endingShader;
 
-		Ref<Audio> m_Audio;
+
+		Ref<Framebuffer> m_Framebuffer;
+		Ref<Shader> m_FramebufferShader;
+		unsigned int rectVAO, rectVBO;
+
+		
 
 		b2World* m_World;
 

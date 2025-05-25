@@ -29,4 +29,7 @@ private:
 	void HandleText(int x, int y, int width, int height, int id);
 	void HandlePlayer(int x, int y, int width, int height);
 	void HandleBadGuy(int x, int y, int width, int height);
+	void HandleBadCat(int x, int y, int width, int height);
+	void HandleGameOverTrigger(int x, int y, int width, int height);
+	void HandleDoor(int x, int y, int width, int height);
 };

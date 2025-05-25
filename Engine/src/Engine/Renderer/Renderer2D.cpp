@@ -18,7 +18,7 @@ namespace Engine {
 
         glm::mat4 viewProj;
         glm::vec3 cameraPos;
-        float maxRenderDistance = 21.0f;
+        float maxRenderDistance = 25.2f;
     };
 
     static Renderer2DData* s_Data = nullptr;

@@ -8,7 +8,8 @@ project "Game"
         "src/**.h",
         "src/**.cpp",
         "src/**.c",
-		"%{wks.location}/Engine/vendor/FelineLoad/feline_load.c"
+		"%{wks.location}/Engine/vendor/FelineLoad/feline_load.c",
+		"Game.rc"
     }
     
     -- Include external directories
@@ -21,7 +22,8 @@ project "Game"
 		"%{wks.location}/Engine/vendor/ecs/include",
 		"%{wks.location}/Engine/vendor/box2d/include",
 		"%{wks.location}/Engine/vendor/FelineLoad",
-		"%{wks.location}/Engine/vendor/json/single_include"
+		"%{wks.location}/Engine/vendor/json/single_include",
+		"%{wks.location}/Engine/vendor/Imgui"
     }
     
     -- Link dependencies

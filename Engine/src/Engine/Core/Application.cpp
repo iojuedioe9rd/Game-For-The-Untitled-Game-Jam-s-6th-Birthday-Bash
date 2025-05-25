@@ -16,6 +16,23 @@
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
+#include <iostream>
+
+static Engine::Ref<Engine::Texture> s_endingTexture = nullptr;
+static Engine::Ref<Engine::Texture> s_skyTexture = nullptr;
+
+float rectangleVertices[] =
+{
+	// Coords    // texCoords
+	 1.0f, -1.0f,  1.0f, 0.0f,
+	-1.0f, -1.0f,  0.0f, 0.0f,
+	-1.0f,  1.0f,  0.0f, 1.0f,
+
+	 1.0f,  1.0f,  1.0f, 1.0f,
+	 1.0f, -1.0f,  1.0f, 0.0f,
+	-1.0f,  1.0f,  0.0f, 1.0f
+};
+
 
 // Vertex Shader source code
 // Vertices coordinates
@@ -68,6 +85,7 @@ namespace Engine
 		s_Instance = this;
 		m_Running = true;
 		m_Window = Window::New();
+
 
 		m_World = new b2World(b2Vec2(0.0f, -9.81));
 
@@ -148,8 +166,36 @@ namespace Engine
 	}
 #endif
 
+	Ref<Texture> s_playerTexture = nullptr;
+
 	void Application::Run()
 	{
+		s_endingTexture = Engine::Texture::Create("assets/Tiled/game_eng.png", GL_TEXTURE_2D, GL_TEXTURE0);
+		m_Framebuffer = Framebuffer::Create(m_Window->GetWidth(), m_Window->GetHeight());
+		m_FramebufferShader = Shader::Create("assets/shaders/framebuffer_vs.glsl", "assets/shaders/framebuffer_fs.glsl");
+		m_endingShader = Shader::Create("assets/shaders/ending_vs.glsl", "assets/shaders/ending_fs.glsl");
+		s_skyTexture = Engine::Texture::Create("assets/textures/sky.png", GL_TEXTURE_2D, GL_TEXTURE1);
+		s_playerTexture = Engine::Texture::Create("assets/textures/player - Copy.png", GL_TEXTURE_2D, GL_TEXTURE2);
+
+		// Setup full-screen quad VAO/VBO
+		glGenVertexArrays(1, &rectVAO);
+		glGenBuffers(1, &rectVBO);
+		glBindVertexArray(rectVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, rectVBO);
+		float rectangleVertices[] = {
+			// positions // texCoords
+			 1.0f, -1.0f, 1.0f, 0.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f,
+			-1.0f,  1.0f, 0.0f, 1.0f,
+			 1.0f,  1.0f, 1.0f, 1.0f,
+			 1.0f, -1.0f, 1.0f, 0.0f,
+			-1.0f,  1.0f, 0.0f, 1.0f
+		};
+		glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 		Renderer2D::Init();
 		m_Shader = Shader::Create("assets/shaders/shader_vs.glsl", "assets/shaders/shader_fs.glsl");
 		//m_Texture = Texture::Create("assets/textures/Player.png", GL_TEXTURE_2D, GL_TEXTURE0);
@@ -194,6 +240,13 @@ namespace Engine
 	static float timer = 0.0f;
 	static float timer2 = 0.0f;
 
+	static float fWorldX = 1000.4f;
+	static float fWorldY = 1000.39f;
+	static float fWorldA = 0.77135f;
+	static float fNear = 0.026492f;
+	static float fFar = 0.199961f;
+	static float fFoVHalf = 3.14159f / 4.0f; // 45 degrees in radians
+
 	static float rotation = 0.0f;
 	void Application::Update()
 	{
@@ -202,19 +255,100 @@ namespace Engine
 		lastTS = time;
 		timer += dt;
 
+
 		float red = 0.5f + 0.5f * SDL_sin(timer);
 		float green = 0.5f + 0.5f * SDL_sin(timer + SDL_PI_D * 2.0 / 3.0);
 		float blue = 0.5f + 0.5f * SDL_sin(timer + SDL_PI_D * 4.0 / 3.0);
 
-		
+		if (isWining)
+		{
+			float fFarX1 = fWorldX + glm::cos(fWorldA - fFoVHalf) * fFar;
+			float fFarY1 = fWorldY + glm::sin(fWorldA - fFoVHalf) * fFar;
 
+			float fNearX1 = fWorldX + glm::cos(fWorldA - fFoVHalf) * fNear;
+			float fNearY1 = fWorldY + glm::sin(fWorldA - fFoVHalf) * fNear;
+
+			float fFarX2 = fWorldX + glm::cos(fWorldA + fFoVHalf) * fFar;
+			float fFarY2 = fWorldY + glm::sin(fWorldA + fFoVHalf) * fFar;
+
+			float fNearX2 = fWorldX + glm::cos(fWorldA + fFoVHalf) * fNear;
+			float fNearY2 = fWorldY + glm::sin(fWorldA + fFoVHalf) * fNear;
+
+			glm::vec4 ffar = { fFarX1, fFarY1, fFarX2, fFarY2 };
+			glm::vec4 fnear = { fNearX1, fNearY1, fNearX2, fNearY2 };
+
+			fWorldX -= glm::cos(fWorldA) * 0.2f * dt;
+			fWorldY -= glm::sin(fWorldA) * 0.2f * dt;
+
+			m_Framebuffer->Bind();
+			glClearColor(0, 0, 0, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glDisable(GL_DEPTH_TEST);
+			m_endingShader->Activate();
+			glActiveTexture(GL_TEXTURE0);
+			s_endingTexture->Bind();
+			glActiveTexture(GL_TEXTURE1);
+			s_skyTexture->Bind();
+			glActiveTexture(GL_TEXTURE2);
+			s_playerTexture->Bind();
+			glUniform2f(glGetUniformLocation(m_endingShader->ID, "playerPos"), fWorldX, fWorldY);
+			glUniform1f(glGetUniformLocation(m_endingShader->ID, "playerAngle"), fWorldA);
+			glUniform1f(glGetUniformLocation(m_endingShader->ID, "cameraHeight"), 1.0f);
+			glUniform2f(glGetUniformLocation(m_endingShader->ID, "cameraPos"), fWorldX, fWorldY);
+			glUniform1f(glGetUniformLocation(m_endingShader->ID, "cameraAngle"), fWorldA);
+			glUniform1f(glGetUniformLocation(m_endingShader->ID, "fFoVHalf"), fFoVHalf);
+			glUniform1f(glGetUniformLocation(m_endingShader->ID, "fNear"), fNear);
+			glUniform1f(glGetUniformLocation(m_endingShader->ID, "fFar"), fFar);
+			glUniform1i(glGetUniformLocation(m_endingShader->ID, "catTexture"), 2);
+			glUniform1i(glGetUniformLocation(m_endingShader->ID, "skyTexture"), 1);
+			glUniform1i(glGetUniformLocation(m_endingShader->ID, "floorTexture"), 0);
+			glUniform4f(glGetUniformLocation(m_endingShader->ID, "far"), ffar.x, ffar.y, ffar.z, ffar.w);
+			glUniform4f(glGetUniformLocation(m_endingShader->ID, "near"), fnear.x, fnear.y, fnear.z, fnear.w);
+			//glUniform1f(glGetUniformLocation(m_endingShader->ID, "time"), timer);
+			glUniform1f(glGetUniformLocation(m_endingShader->ID, "width"), m_Window->GetWidth());
+			glUniform1f(glGetUniformLocation(m_endingShader->ID, "height"), m_Window->GetHeight());
+			glBindVertexArray(rectVAO);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			Camera.Position = glm::vec3(0, 0, -10);
+			Renderer2D::BeginScene(Camera.Matrix(90, 0.1f, 100.0f), Camera.Position);
+
+			glEnable(GL_DEPTH_TEST);
+			glActiveTexture(GL_TEXTURE0);
+			
+
+			glDisable(GL_DEPTH_TEST);
+
+			m_Framebuffer->Unbind(m_Window->GetWidth(), m_Window->GetHeight());
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			m_FramebufferShader->Activate();
+			glBindVertexArray(rectVAO);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_Framebuffer->GetColorAttachment());
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			m_Window->OnUpdate();
+			return;
+		}
+
+		m_Framebuffer->Bind();
 		glClearColor(red, green, blue, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
 
 		if (timer2 >= 1)
 		{
+			m_Audio->SetVolume(0.5f);
 			m_Audio->SetLoop(true);
 			m_Audio->Play();
+
+			
 
 			//timer2 = 0;
 		}
@@ -341,6 +475,17 @@ namespace Engine
 		Renderer2D::DrawQuad(transform, m_Texture, glm::vec4(1.0f));*/
 
 		Renderer2D::EndScene();
+		
+		m_Framebuffer->Unbind(m_Window->GetWidth(), m_Window->GetHeight());
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		m_FramebufferShader->Activate();
+		glBindVertexArray(rectVAO);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		glBindTexture(GL_TEXTURE_2D, m_Framebuffer->GetColorAttachment());
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		m_Window->OnUpdate();
 
@@ -350,6 +495,7 @@ namespace Engine
 	void Application::ResizeGL(uint32_t w, uint32_t h)
 	{
 		m_Window->ResizeGL(w, h);
+		m_Framebuffer->Resize(w, h);
 	}
 	
 }
