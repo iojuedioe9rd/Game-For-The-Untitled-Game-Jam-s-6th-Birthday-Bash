@@ -229,7 +229,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
                 int randomNum3 = rand() % 101;
                 float rng3 = static_cast<float>(randomNum3) / 200.0f;
 
-				player_swap_sound->SetVolume(rng3);
+				player_swap_sound->SetVolume(SDL_max((rng3 - .5f), .1));
 
                 player_swap_sound->Play();
                 glm::vec3 old_pos = tr.Position;
@@ -300,7 +300,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
                 int randomNum3 = rand() % 101;
                 float rng3 = static_cast<float>(randomNum3) / 200.0f;
 
-                badCat.swapSound->SetVolume(rng3);
+                badCat.swapSound->SetVolume(rng3 - .1f);
 
 				badCat.swapSound->Play();
 				badCat.swapTimer = 0.0f;

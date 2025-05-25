@@ -147,3 +147,6 @@
 30512	37806	7698991141935787	build/Engine/src/Engine/Renderer/Renderer2D.o	acea11dfd6498de7
 31084	41367	7698991146736796	build/Engine/vendor/ImGui/imgui.o	70995a854bd6b5ac
 41373	178807	7698991249484464	dist/index.html	5870bbfd2604ca13
+48	6866	7699022682977020	build/Engine/src/Engine/Core/Application.o	c0dc3e12a65f6d3f
+27	10076	7699022682737014	build/Game/src/main.o	4bffcdb77218da90
+10131	100910	7699022783809976	dist/index.html	e33bf6ac614953b3
